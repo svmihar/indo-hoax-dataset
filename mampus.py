@@ -1,6 +1,8 @@
 
 from pengambil_hoax import ambil
 
+links = open('hoax.txt','r').read().splitlines()
+
 for link in links: 
     paragraf = ambil(link)
     df_ =pd.Series([link, paragraf])
