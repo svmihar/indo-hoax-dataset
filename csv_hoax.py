@@ -1,7 +1,9 @@
 from pengambil_hoax import ambil
 import pandas as pd 
 
-links = open('hoax.txt','r').read().splitlines()
+links = open('hoax_new.txt','r').read().splitlines()
+
+df = pd.DataFrame()
 
 for link in links: 
     paragraf = ambil(link)
