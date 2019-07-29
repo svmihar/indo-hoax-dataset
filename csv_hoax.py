@@ -1,4 +1,5 @@
 from pengambil_hoax import ambil
+import pandas as pd 
 
 links = open('hoax.txt','r').read().splitlines()
 
