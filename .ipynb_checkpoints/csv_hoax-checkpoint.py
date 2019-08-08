@@ -1,4 +1,4 @@
-from pengambil_hoax import ambil
+from ehe_hoaxer import pull_paragraph_hoax
 
 links = open('hoax.txt','r').read().splitlines()
 

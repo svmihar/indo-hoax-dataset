@@ -1,8 +1,9 @@
-import requests, random
+import requests
+import random
 from bs4 import BeautifulSoup
 
 user_agent_list = [
-   #Chrome
+    # Chrome
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
     'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
     'Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
@@ -13,7 +14,7 @@ user_agent_list = [
     'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
     'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-    #Firefox
+    # Firefox
     'Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)',
     'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
     'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
@@ -31,20 +32,36 @@ user_agent_list = [
 
 headers = {'User-Agent': random.choice(user_agent_list)}
 
-pages = list(range(1,162))
+
+# TODO 
+# get last page on the new site
+pages = list(range(1, 162))
 
 tbh = 'https://www.turnbackhoax.id/page'
 
-for page in pages: 
-    link = f'{tbh}/{page}'
-    print(link)
 
-    r = requests.get(link, headers=headers, verify=False)
+def pull_link_hoax(list_of_pages)
+
+
+for page in list_of_pages:
+        link = f'{tbh}/{page}'
+        print(link)
+
+        r = requests.get(link, headers=headers, verify=False)
+        soup = BeautifulSoup(r.content, 'lxml')
+        a = soup.find_all('a', {'rel': 'bookmark'})
+
+        kumpulan_hoax = [link['href'] for link in a]
+        print(kumpulan_hoax)
+        with open('hoax.txt', 'a') as f:
+            for hoax in kumpulan_hoax:
+                f.writelines(hoax+'\n')
+
+
+def pull_paragraph_hoax(link):
+    r = requests.get(link, verify=False)
     soup = BeautifulSoup(r.content, 'lxml')
-    a = soup.find_all('a', {'rel':'bookmark'})
-
-    kumpulan_hoax = [link['href'] for link in a]
-    print(kumpulan_hoax)
-    with open('hoax.txt','a') as f: 
-        for hoax in kumpulan_hoax: 
-            f.writelines(hoax+'\n')
+    isi = soup.find('div', {'class': 'entry-content mh-clearfix'})
+    kumpulan_p = isi.find_all('p')
+    paragrafs = [p.text for p in kumpulan_p]
+    return " ".join([p for p in paragrafs if not p == '==='])
