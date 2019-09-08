@@ -1,67 +1,54 @@
 import requests
 import random
 from bs4 import BeautifulSoup
+import datetime
 
-user_agent_list = [
-    # Chrome
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-    # Firefox
-    'Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)',
-    'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
-    'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
-    'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko',
-    'Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko',
-    'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko',
-    'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)',
-    'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
-    'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
-    'Mozilla/5.0 (Windows NT 6.1; Win64; x64; Trident/7.0; rv:11.0) like Gecko',
-    'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
-    'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)',
-    'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)'
-]
+# TODO
+# get last page on the new site
+
+user_agent_list = open('user-agents.txt').read().splitlines()
 
 headers = {'User-Agent': random.choice(user_agent_list)}
 
+class Link:
+    def __init__(self, last_page):
+        self.last_page = last_page
+        self.link = 'https://www.turnbackhoax.id/page'
+        self._FILE_NAME = datetime.datetime.now().strftime('%d-%m-%y')
 
-# TODO 
-# get last page on the new site
-pages = list(range(1, 162))
+    def generate_txt(self):
+        print(f'getting {len(self.last_page)} pages...')
+        for i in self.last_page:
+            link = f'{self.link}/{i}'
+            r = requests.get(link, headers = headers, veryfi=False)
+            s = BeautifulSoup(r.content, 'lxml')
+            a = soup.find_all('a', {'rel': 'bookmark'})
+            hoaxes = [x['href'] for x in a]
+        print(f'found {len(hoaxes)} links')
+        print(f'now writing to {self._FILE_NAME}_hoax_links}')
+        with open(f'{self._FILE_NAME}_hoax_links') as f:
+            for l in hoaxes:
+                f.writelines(l+'\n')
 
-tbh = 'https://www.turnbackhoax.id/page'
+    def get_last_page(self):
+        pages = list(range(1, 162))
+        return pages
+
+    def run(self):
+        pass
 
 
-def pull_link_hoax(list_of_pages)
+class Paragraf:
+    def __init__(self, path_to_links):
+        self.links = open(path_to_links).read().splitlines()
 
-
-for page in list_of_pages:
-        link = f'{tbh}/{page}'
-        print(link)
-
-        r = requests.get(link, headers=headers, verify=False)
+    def get_paragraf(self, link):
+        r = requests.get(link, verify=False)
         soup = BeautifulSoup(r.content, 'lxml')
-        a = soup.find_all('a', {'rel': 'bookmark'})
+        isi = soup.find('div', {'class': 'entry-content mh-clearfix'})
+        kumpulan_p = isi.find_all('p')
+        paragrafs = [p.text for p in kumpulan_p]
+        return " ".join([p for p in paragrafs if not p == '==='])
 
-        kumpulan_hoax = [link['href'] for link in a]
-        print(kumpulan_hoax)
-        with open('hoax.txt', 'a') as f:
-            for hoax in kumpulan_hoax:
-                f.writelines(hoax+'\n')
-
-
-def pull_paragraph_hoax(link):
-    r = requests.get(link, verify=False)
-    soup = BeautifulSoup(r.content, 'lxml')
-    isi = soup.find('div', {'class': 'entry-content mh-clearfix'})
-    kumpulan_p = isi.find_all('p')
-    paragrafs = [p.text for p in kumpulan_p]
-    return " ".join([p for p in paragrafs if not p == '==='])
+    def run(self):
+        pass
